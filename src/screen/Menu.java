@@ -20,7 +20,7 @@ public class Menu {
 
     public Menu() {
         try {
-            this.imgButton = javax.imageio.ImageIO.read(new java.io.File("resorces/Buttons.png"));
+            this.imgButton = javax.imageio.ImageIO.read(new java.io.File("res/Buttons.png"));
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
