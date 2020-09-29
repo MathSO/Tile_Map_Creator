@@ -11,10 +11,10 @@ public class Change {
     }
 
     public void undo(int[][] mapa) {
-        mapa[x][y] = last;
+        mapa[x][y] = this.last;
     }
 
     public void redo(int[][] mapa) {
-        mapa[x][y] = atual;
+        mapa[x][y] = this.atual;
     }
 }

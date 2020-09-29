@@ -24,7 +24,7 @@ public class TileIO {
     private static File file;
     private static JTextField wt = new JTextField(15), ht = new JTextField(15);
 
-    public static void newMap(Menu m){
+    public static void newMap(Menu m) {
         file = null;
 
         int x = 0, y = 0;
@@ -32,6 +32,9 @@ public class TileIO {
             try {
                 x = Integer.parseInt(wt.getText());
                 y = Integer.parseInt(ht.getText());
+
+                ChangeListener.clear();
+                m.setMap(new int[x][y]);
             } catch (Exception e) {
 
                 e.printStackTrace();
@@ -40,12 +43,9 @@ public class TileIO {
                 return;
             }
         }
-
-        ChangeListener.clear();
-        m.setMap(new int[x][y]);
     }
 
-    public static void loadMap(Menu m){
+    public static void loadMap(Menu m) {
         ObjectInputStream sc;
         int n, x, y, aux[][];
         Tile[] tile;
@@ -74,7 +74,7 @@ public class TileIO {
             int w = (int)sc.readObject(), h = (int)sc.readObject();
 
             tile = new Tile[n];
-            for (int i = 0; i < n; i++){
+            for (int i = 0; i < n; i++) {
                 BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
                 img.setRGB(0, 0, w, h, (int[])sc.readObject(), 0, w);
 
@@ -85,22 +85,23 @@ public class TileIO {
 
 
             sc.close();
+
+            ChangeListener.clear();
+            m.setMap(aux);
+            m.setTiles(tile);
         } catch (Exception e) {
             e.printStackTrace();
 
             return;
         }
-        
-        ChangeListener.clear();
-        m.setMap(aux);
-        m.setTiles(tile);
     }
 
     public static void saveMap(int map[][], Tile[] tiles) {
         if (file == null) {
             do {
-                if(fc.showOpenDialog(null) != fc.APPROVE_OPTION)
+                if(fc.showOpenDialog(null) != fc.APPROVE_OPTION) {
                     return;
+                }
                 
                 file = fc.getSelectedFile();
             } while (file.exists() && JOptionPane.showConfirmDialog(null, "File already existis! Do you want to overwrite?", "Warning!", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) != JOptionPane.YES_OPTION);
@@ -124,10 +125,10 @@ public class TileIO {
             pw.writeObject(map);
 
             pw.flush();
+
+            ChangeListener.clear();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            ChangeListener.clear();
         }
     }
 
@@ -165,7 +166,7 @@ public class TileIO {
         return painel;
     }
     
-    public static Tile[] readTiles(Tile[] aux) {
+    public static void readTiles(Menu m) {
         int tileSizeX = 80, tileSizeY = 80;
 
         if (JOptionPane.showConfirmDialog(null, createPanel(), "Tile Size", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
@@ -177,14 +178,14 @@ public class TileIO {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Try again!\nOnly integer numbers alowed!!");
                 
-                return aux;
+                return;
             }
         } else {
-            return aux;
+            return;
         }
 
         if (fc.showOpenDialog(null) != fc.APPROVE_OPTION ) {
-            return aux;
+            return;
         }
 
         BufferedImage img;
@@ -193,11 +194,12 @@ public class TileIO {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Loading faled! Please try again!");
-            return aux;
+            return;
         }
 
         int w = img.getWidth(), h = img.getHeight(), tm = w / tileSizeX;
-        aux = new tile.Tile[(w / tileSizeX) * (h / tileSizeY) + 1];
+        Tile[] aux = new tile.Tile[(w / tileSizeX) * (h / tileSizeY) + 1];
+
         aux[0] = new Tile(new BufferedImage(tileSizeX, tileSizeY, BufferedImage.TYPE_INT_ARGB));
         
         for (int i = 0; i < aux.length - 1; i++) {
@@ -205,6 +207,6 @@ public class TileIO {
         }
 
         ChangeListener.clear();
-        return aux;
+        m.setTiles(aux);
     }
 }

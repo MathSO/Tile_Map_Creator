@@ -25,7 +25,7 @@ public class ChangeListener {
         changed.pop();
     }
 
-    public static void redo(int[][] map){
+    public static void redo(int[][] map) {
         if (unchanged.empty()) {
             return;
         }
@@ -36,7 +36,7 @@ public class ChangeListener {
         unchanged.pop();
     }
 
-    public static boolean hasChange(){
+    public static boolean hasChange() {
         return !changed.empty();
     }
 }

@@ -3,10 +3,10 @@ package principal;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-public class Painel  extends javax.swing.JPanel implements java.awt.event.MouseListener, java.awt.event.KeyListener{
+public class Panel  extends javax.swing.JPanel implements java.awt.event.MouseListener, java.awt.event.KeyListener {
     private static screen.Menu menu;
 
-    public Painel() {
+    public Panel() {
         this.setPreferredSize(new java.awt.Dimension(800, 800));
 
         this.setFocusable(true);
@@ -29,23 +29,23 @@ public class Painel  extends javax.swing.JPanel implements java.awt.event.MouseL
         this.repaint();
     }
 
-    public void openTile(){
+    public void openTile() {
         menu.openTile();
     }
 
-    public void saveMap(){
+    public void saveMap() {
         menu.saveMap();
     }
 
-    public void newMap(){
+    public void newMap() {
         menu.newMap();
     }
 
-    public void loadMap(){
+    public void loadMap() {
         menu.loadMap();
     }
 
-    public void exit(){
+    public void exit() {
         menu.exit();
     }
 
@@ -67,13 +67,14 @@ public class Painel  extends javax.swing.JPanel implements java.awt.event.MouseL
         if (e.getKeyCode() == KeyEvent.VK_S && e.getModifiers() == KeyEvent.CTRL_MASK){
             System.out.println("Salvando...");
             this.saveMap();
-        }else{
+
+        } else {
             menu.keyPressed(e);
         }
     }
 
     public void mouseClicked(MouseEvent e) {
-        if(e.getButton() == MouseEvent.BUTTON1){
+        if (e.getButton() == MouseEvent.BUTTON1) {
             this.menu.mouseClick(e.getX(), e.getY());
         }
     }

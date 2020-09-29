@@ -19,15 +19,15 @@ public class Tile {
         g.drawImage(img, x, y, rx, ry, null);
     }
 
-    public BufferedImage getImage(){
+    public BufferedImage getImage() {
         return img;
     }
 
-    public int getWidth(){
+    public int getWidth() {
         return img.getWidth();
     }
 
-    public int getHeight(){
+    public int getHeight() {
         return img.getHeight();
     }
 

@@ -1,32 +1,33 @@
 package principal;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-
-public class Janela extends JFrame implements java.awt.event.WindowListener{
+public class Janela extends JFrame implements java.awt.event.WindowListener {
     private static Painel painel = new Painel();
-    public Janela(String s){
+
+    public Janela(String s) {
         super(s);
 
         this.addWindowListener(this);
     }
 
-    public void windowClosing(WindowEvent e){
+    public void windowClosing(WindowEvent e) {
         painel.exit();
     }
 
-    public void windowClosed(WindowEvent e){}
-    public void windowDeactivated(WindowEvent e){}
-    public void windowActivated(WindowEvent e){}
-    public void windowOpened(WindowEvent e){}
-    public void windowDeiconified(WindowEvent e){}
-    public void windowIconified(WindowEvent e){}
+    public void windowClosed(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
+    public void windowActivated(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
 
     public static void main(String args[]) {
         Janela janela = new Janela("Editor!");
@@ -43,44 +44,44 @@ public class Janela extends JFrame implements java.awt.event.WindowListener{
         JMenuItem undo = new JMenuItem("Undo");
         JMenuItem redo = new JMenuItem("Redo");
 
-        newMap.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        newMap.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.newMap();
             }
         });
 
-        saveMap.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        saveMap.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.saveMap();
             }
         });
 
-        loadMap.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        loadMap.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.loadMap();
             }
         });
 
-        addTile.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        addTile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.openTile();
             }
         });
 
-        exit.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        exit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.exit();
             }
         });
 
-        undo.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        undo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.undo();
             }
         });
 
-        redo.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        redo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 painel.redo();
             }
         });

@@ -81,7 +81,7 @@ public class Menu {
             for (int j = mapOffsetX / tiles[0].getWidth(); j < map[i].length && j * tiles[0].getWidth() <= mapOffsetX + g.getClipBounds().getWidth(); j++) {
                 g.drawRect(-mapOffsetX + j * tiles[0].getWidth(), -mapOffsetY + 200 + i * tiles[0].getHeight(), tiles[0].getWidth() - 1, tiles[0].getHeight() - 1);
                 
-                if (map[i][j] < tiles.length){
+                if (map[i][j] < tiles.length) {
                     tiles[map[i][j]].draw(g, -mapOffsetX +  j * tiles[0].getWidth(), -mapOffsetY + 200 + i * tiles[0].getHeight());
                 }
             }
@@ -118,8 +118,8 @@ public class Menu {
 
     public void openTile() {
         System.out.println("Add...");
-        this.tiles = TileIO.readTiles(this.tiles);
-        init = -20;
+        TileIO.readTiles(this);
+        this.init = -20;
     }
 
     public void exit() {
@@ -142,7 +142,7 @@ public class Menu {
     public void setTileToSeleceted(int x, int y) {
         if (x < map.length && y < map[x].length && map[x][y] != selected) {
             ChangeListener.addChange(x, y, selected, map[x][y]);
-            map[x][y] = selected;
+            this.map[x][y] = this.selected;
         }
     }
 
@@ -181,7 +181,7 @@ public class Menu {
             } else {
                 if (y > 70 && y < 70 + this.scale) {
                     int s = (init + x) / (scale + 10);
-                    if (tiles.length > s){
+                    if (tiles.length > s) {
                         selected = s;
                     }
                 }
@@ -189,23 +189,23 @@ public class Menu {
         }
     }
 
-    public void keyPressed(KeyEvent k){
+    public void keyPressed(KeyEvent k) {
         switch (k.getKeyCode()) {
             case KeyEvent.VK_W:
                 upKey = true;
-            break;
+                break;
 
             case KeyEvent.VK_S:
                 downKey = true;
-            break;
+                break;
 
             case KeyEvent.VK_A:
                 leftKey = true;
-            break;
+                break;
 
             case KeyEvent.VK_D:
                 rightKey = true;
-            break;
+                break;
 
             case KeyEvent.VK_Z:
                 if (k.getModifiers() == KeyEvent.CTRL_MASK) {
@@ -215,27 +215,27 @@ public class Menu {
                         redo();
                     }
                 }
-            break;
+                break;
         }
     }
 
-    public void keyReleased(KeyEvent k){
+    public void keyReleased(KeyEvent k) {
         switch (k.getKeyCode()) {
             case KeyEvent.VK_W:
                 upKey = false;
-            break;
+                break;
 
             case KeyEvent.VK_S:
                 downKey = false;
-            break;
+                break;
 
             case KeyEvent.VK_A:
                 leftKey = false;
-            break;
+                break;
 
             case KeyEvent.VK_D:
                 rightKey = false;
-            break;
+                break;
         }
     }
 
@@ -243,11 +243,11 @@ public class Menu {
         this.map = map;
     }
 
-    public void setTiles(Tile[] t){
+    public void setTiles(Tile[] t) {
         tiles = t;
     }
 
-    public Tile[] getTiles(){
+    public Tile[] getTiles() {
         return tiles;
     }
 }
