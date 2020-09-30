@@ -1,6 +1,6 @@
 package screen;
 
-import tile.Tile;
+import tile.TileSet;
 import tile.TileIO;
 
 import update.ChangeListener;
@@ -13,10 +13,18 @@ import javax.swing.JOptionPane;
 
 public class Menu {
     private BufferedImage imgButton;
-    private Tile[] tiles;
-    private int init, scale, selected, mapOffsetX, mapOffsetY;
-    private int[][] map;
-    private boolean leftKey, rightKey, upKey, downKey;
+    private Map map;
+
+    private int init;
+    private int scale;
+    private int selected;
+    private int mapOffsetX;
+    private int mapOffsetY;
+    
+    private boolean leftKey;
+    private boolean rightKey;
+    private boolean upKey;
+    private boolean downKey;
 
     public Menu() {
         try {
@@ -30,95 +38,78 @@ public class Menu {
         this.init = -20;
         this.scale = 80;
 
-        this.tiles = new Tile[1];
+        map = new Map(0, 0);
 
-        tiles[0] = new Tile(new BufferedImage(scale, scale, BufferedImage.TYPE_INT_ARGB));
-
-        this.map = new int[0][0];
-        this.mapOffsetX = 0;
-        this.mapOffsetY = 0;
+        this.mapOffsetX = this.mapOffsetY = 0;
 
         this.leftKey = this.rightKey = this.upKey = this.downKey = false;
     }
 
     public void update() {
-        if (leftKey) {
+        if (leftKey && mapOffsetX > 0) {
             mapOffsetX--;
         }
 
-        if (rightKey) {
+        if (rightKey && mapOffsetX < map.getWidth()) {
             mapOffsetX++;
         }
         
-        if (upKey) {
+        if (upKey && mapOffsetY > 0) {
             mapOffsetY--;
         }
         
-        if (downKey) {
+        if (downKey && mapOffsetY < map.getHeight()) {
             mapOffsetY++;
-        }
-        
-        if (mapOffsetX < 0) {
-            mapOffsetX = 0;
-        }
-        
-        if (mapOffsetY < 0) {
-            mapOffsetY = 0;
-        }
-        
-        if (mapOffsetX > map.length * tiles[0].getWidth()) {
-            mapOffsetX = map.length * tiles[0].getWidth();
-        }
-        
-        if (mapOffsetY > map.length * tiles[0].getHeight()) {
-            mapOffsetY = map.length * tiles[0].getHeight();
         }
     }
 
     public void draw(java.awt.Graphics g) {
-        g.setColor(java.awt.Color.WHITE);
-        for (int i = mapOffsetY / tiles[0].getHeight(); i < map.length && i * tiles[0].getHeight() <= mapOffsetY + g.getClipBounds().getHeight(); i++){
-            for (int j = mapOffsetX / tiles[0].getWidth(); j < map[i].length && j * tiles[0].getWidth() <= mapOffsetX + g.getClipBounds().getWidth(); j++) {
-                g.drawRect(-mapOffsetX + j * tiles[0].getWidth(), -mapOffsetY + 200 + i * tiles[0].getHeight(), tiles[0].getWidth() - 1, tiles[0].getHeight() - 1);
-                
-                if (map[i][j] < tiles.length) {
-                    tiles[map[i][j]].draw(g, -mapOffsetX +  j * tiles[0].getWidth(), -mapOffsetY + 200 + i * tiles[0].getHeight());
-                }
-            }
+        if (map != null) {
+            map.drawMap(g, mapOffsetX, mapOffsetY);
         }
         
         g.setColor(java.awt.Color.GRAY);
         g.fill3DRect(0, 0, (int)g.getClipBounds().getWidth(), 200, false);
         g.drawImage(imgButton, 0, 0, null);
 
-        for (int i = 0; i < tiles.length; i++) {
-            tiles[i].draw(g, -init + (10 + this.scale) * i, 70, this.scale, this.scale);
+        TileSet ts = map.getTileSet();
+        for (int i = 0; i < ts.getLines(); i++) {
+            for (int j = 0; j < ts.getTilesPerLine(); j++) {
+                ts.getTile(i, j).draw(g, -init + (10 + this.scale) * (j + i * ts.getTilesPerLine()), 70, this.scale, this.scale);
 
-            g.setColor(java.awt.Color.WHITE);
-            g.drawRect(-init + (10 + this.scale) * i, 70, this.scale - 1, this.scale - 1);
+                g.setColor(java.awt.Color.WHITE);
+                g.drawRect(-init + (10 + this.scale) * (j + i * ts.getTilesPerLine()), 70, this.scale - 1, this.scale - 1);
+            }
         }
     }
 
     public void newMap() {
-        TileIO.newMap(this);
-        mapOffsetX = mapOffsetY = 0;
+        Map aux = TileIO.newMap();
+        if (aux != null) {
+            aux.setTileSet(map.getTileSet());
+            map = aux;
+            
+            mapOffsetX = mapOffsetY = 0;
+        }
     }
 
     public void saveMap() {
-        if (map != null && map.length > 0) {
-            TileIO.saveMap(map, tiles);
+        if (map != null) {
+            TileIO.saveMap(map);
         } else {
             JOptionPane.showMessageDialog(null, "There is no open map in the editor!");
         }
     }
 
     public void loadMap() {
-        TileIO.loadMap(this);
+        Map aux = TileIO.loadMap();
+        if (aux != null) {
+            map = aux;
+        }
     }
 
     public void openTile() {
-        System.out.println("Add...");
-        TileIO.readTiles(this);
+        map.setTileSet(TileIO.readTiles());
         this.init = -20;
     }
 
@@ -127,10 +118,10 @@ public class Menu {
             switch (JOptionPane.showConfirmDialog(null, "You are about to close the window! Would like to save your progress?", "Confirmation!", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE)) {
                 case JOptionPane.YES_OPTION:
                     this.saveMap();
-
+                    // fall through
                 case JOptionPane.NO_OPTION:
                     System.exit(0);
-                
+
                 case JOptionPane.CANCEL_OPTION:
                 default:
             }
@@ -139,23 +130,16 @@ public class Menu {
         }
     }
 
-    public void setTileToSeleceted(int x, int y) {
-        if (x < map.length && y < map[x].length && map[x][y] != selected) {
-            ChangeListener.addChange(x, y, selected, map[x][y]);
-            this.map[x][y] = this.selected;
-        }
-    }
-
     public void undo() {
-        ChangeListener.undo(map);
+        map.undo();
     }
 
     public void redo() {
-        ChangeListener.redo(map);
+        map.redo();
     }
 
     public void mouseClick(int x, int y) {
-        if ( y < 50 && tiles.length != 1) {
+        if ( y < 50 && map.getTileSet().getLines() != 0) {
             if (x < 50) {
                 init -= 200;
 
@@ -164,7 +148,7 @@ public class Menu {
                 }
             } else {
                 if (x < 100) {
-                    if (init + 200 < (tiles.length - 1) * (scale + 10)) {
+                    if (init + 200 < (map.getTileSet().getLines() * map.getTileSet().getTilesPerLine()) * (scale + 10)) {
                         init += 200;
                     }
                 }
@@ -174,16 +158,14 @@ public class Menu {
                 x += mapOffsetX;
                 y += mapOffsetY - 200;
 
-                x /= tiles[0].getWidth();
-                y /= tiles[0].getHeight();
+                x /= map.getTileSet().getWidth();
+                y /= map.getTileSet().getHeight();
 
-                setTileToSeleceted(y, x);
+                map.setTile(y, x, selected);
             } else {
                 if (y > 70 && y < 70 + this.scale) {
                     int s = (init + x) / (scale + 10);
-                    if (tiles.length > s) {
-                        selected = s;
-                    }
+                    selected = s;
                 }
             }
         }
@@ -209,10 +191,10 @@ public class Menu {
 
             case KeyEvent.VK_Z:
                 if (k.getModifiers() == KeyEvent.CTRL_MASK) {
-                    undo();
+                    this.undo();
                 } else {
                     if (k.getModifiers() == (KeyEvent.CTRL_MASK | KeyEvent.SHIFT_MASK)) {
-                        redo();
+                        this.redo();
                     }
                 }
                 break;
@@ -237,17 +219,5 @@ public class Menu {
                 rightKey = false;
                 break;
         }
-    }
-
-    public void setMap(int map[][]) {
-        this.map = map;
-    }
-
-    public void setTiles(Tile[] t) {
-        tiles = t;
-    }
-
-    public Tile[] getTiles() {
-        return tiles;
     }
 }

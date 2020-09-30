@@ -3,7 +3,6 @@ package tile;
 import java.awt.image.BufferedImage;
 
 public class Tile {
-    public static final int BLOCKED = 1;
     private BufferedImage img;
 
     public Tile(BufferedImage i, int rx, int ry) {

@@ -9,17 +9,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
-public class Janela extends JFrame implements java.awt.event.WindowListener {
-    private static Painel painel = new Painel();
+public class MainWindow extends JFrame implements java.awt.event.WindowListener {
+    private static Panel panel = new Panel();
 
-    public Janela(String s) {
+    public MainWindow(String s) {
         super(s);
 
         this.addWindowListener(this);
     }
 
     public void windowClosing(WindowEvent e) {
-        painel.exit();
+        panel.exit();
     }
 
     public void windowClosed(WindowEvent e) {}
@@ -29,8 +29,8 @@ public class Janela extends JFrame implements java.awt.event.WindowListener {
     public void windowDeiconified(WindowEvent e) {}
     public void windowIconified(WindowEvent e) {}
 
-    public static void main(String args[]) {
-        Janela janela = new Janela("Editor!");
+    public static void main(String[] args) {
+        MainWindow frame = new MainWindow("Editor!");
         javax.swing.JMenuBar menuBar = new javax.swing.JMenuBar();
         JMenu file = new JMenu("File");
         JMenu edit = new JMenu("Edit");
@@ -46,43 +46,43 @@ public class Janela extends JFrame implements java.awt.event.WindowListener {
 
         newMap.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.newMap();
+                panel.newMap();
             }
         });
 
         saveMap.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.saveMap();
+                panel.saveMap();
             }
         });
 
         loadMap.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.loadMap();
+                panel.loadMap();
             }
         });
 
         addTile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.openTile();
+                panel.openTile();
             }
         });
 
         exit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.exit();
+                panel.exit();
             }
         });
 
         undo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.undo();
+                panel.undo();
             }
         });
 
         redo.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                painel.redo();
+                panel.redo();
             }
         });
 
@@ -100,14 +100,14 @@ public class Janela extends JFrame implements java.awt.event.WindowListener {
         menuBar.add(file);
         menuBar.add(edit);
 
-        janela.setJMenuBar(menuBar);
-        janela.add(painel);
+        frame.setJMenuBar(menuBar);
+        frame.add(panel);
 
-        janela.pack();
+        frame.pack();
 
-        janela.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        janela.setLocationRelativeTo(null);
-        janela.setVisible(true);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

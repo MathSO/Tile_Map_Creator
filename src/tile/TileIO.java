@@ -2,7 +2,7 @@ package tile;
 
 import update.ChangeListener;
 
-import screen.Menu;
+import screen.Map;
 
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
@@ -24,7 +24,7 @@ public class TileIO {
     private static File file;
     private static JTextField wt = new JTextField(15), ht = new JTextField(15);
 
-    public static void newMap(Menu m) {
+    public static Map newMap() {
         file = null;
 
         int x = 0, y = 0;
@@ -34,28 +34,34 @@ public class TileIO {
                 y = Integer.parseInt(ht.getText());
 
                 ChangeListener.clear();
-                m.setMap(new int[x][y]);
             } catch (Exception e) {
-
-                e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Try again!\nOnly integer numbers alowed!!");
                 
-                return;
+                return null;
             }
+        } else {
+            return null;
         }
+
+        if (x < 0 || y < 0) {
+            JOptionPane.showMessageDialog(null, "Try again!\nOnly positive numbers alowed!!");
+            return null;
+        }
+
+        return new Map(x, y);
     }
 
-    public static void loadMap(Menu m) {
+    public static Map loadMap() {
         ObjectInputStream sc;
-        int n, x, y, aux[][];
-        Tile[] tile;
+        int x, y;
+        int aux[][];
 
         try {
             boolean right = false;
 
             do {
                 if (fc.showOpenDialog(null) != fc.APPROVE_OPTION) {
-                    return;
+                    return null;
                 }
                 
                 file = fc.getSelectedFile();
@@ -70,33 +76,34 @@ public class TileIO {
 
             sc = new ObjectInputStream(new java.io.FileInputStream(file));
 
-            n = (int)sc.readObject();
-            int w = (int)sc.readObject(), h = (int)sc.readObject();
-
-            tile = new Tile[n];
-            for (int i = 0; i < n; i++) {
-                BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                img.setRGB(0, 0, w, h, (int[])sc.readObject(), 0, w);
-
-                tile[i] = new Tile(img);
+            int imgLine = (int)sc.readObject();
+            int imgPerLine = (int)sc.readObject();
+            int w = (int)sc.readObject();
+            int h = (int)sc.readObject();
+            BufferedImage[][] tile = new BufferedImage[imgLine][imgPerLine];
+            
+            for (int i = 0; i < imgLine; i++) {
+                for(int j = 0; j < imgPerLine; j++) {
+                    tile[i][j] = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+                    tile[i][j].setRGB(0, 0, w, h, (int[])sc.readObject(), 0, w);
+                }
             }
             
-            aux = (int[][])sc.readObject();
+            int[][] map = (int[][])sc.readObject();
 
 
             sc.close();
 
             ChangeListener.clear();
-            m.setMap(aux);
-            m.setTiles(tile);
+            return new Map(map, tile);
         } catch (Exception e) {
             e.printStackTrace();
 
-            return;
+            return null;
         }
     }
 
-    public static void saveMap(int map[][], Tile[] tiles) {
+    public static void saveMap(Map map) {
         if (file == null) {
             do {
                 if(fc.showOpenDialog(null) != fc.APPROVE_OPTION) {
@@ -113,16 +120,20 @@ public class TileIO {
 
         try {
             ObjectOutputStream pw = new ObjectOutputStream(new java.io.FileOutputStream(file));
+            Tile[][] tiles = map.getTileSet().getTiles();
 
             pw.writeObject(tiles.length);
+            pw.writeObject(tiles[0].length);
 
-            pw.writeObject(tiles[0].getWidth());
-            pw.writeObject(tiles[0].getHeight());
+            pw.writeObject(tiles[0][0].getWidth());
+            pw.writeObject(tiles[0][0].getHeight());
             for (int i = 0; i < tiles.length; i++) {
-                pw.writeObject(tiles[i].getImage().getRGB(0, 0, tiles[i].getWidth(), tiles[i].getHeight(), null, 0, tiles[i].getWidth()));
+                for (int j = 0; j < tiles[i].length; j++) {
+                    pw.writeObject(tiles[i][j].getImage().getRGB(0, 0, tiles[i][j].getWidth(), tiles[i][j].getHeight(), null, 0, tiles[i][j].getWidth()));
+                }
             }
 
-            pw.writeObject(map);
+            pw.writeObject(map.getMapInt());
 
             pw.flush();
 
@@ -166,8 +177,9 @@ public class TileIO {
         return painel;
     }
     
-    public static void readTiles(Menu m) {
-        int tileSizeX = 80, tileSizeY = 80;
+    public static BufferedImage[][] readTiles() {
+        int tileSizeX = 0;
+        int tileSizeY = 0;
 
         if (JOptionPane.showConfirmDialog(null, createPanel(), "Tile Size", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
             try {
@@ -178,14 +190,14 @@ public class TileIO {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Try again!\nOnly integer numbers alowed!!");
                 
-                return;
+                return null;
             }
         } else {
-            return;
+            return null;
         }
 
         if (fc.showOpenDialog(null) != fc.APPROVE_OPTION ) {
-            return;
+            return null;
         }
 
         BufferedImage img;
@@ -194,19 +206,20 @@ public class TileIO {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Loading faled! Please try again!");
-            return;
+            return null;
         }
 
-        int w = img.getWidth(), h = img.getHeight(), tm = w / tileSizeX;
-        Tile[] aux = new tile.Tile[(w / tileSizeX) * (h / tileSizeY) + 1];
-
-        aux[0] = new Tile(new BufferedImage(tileSizeX, tileSizeY, BufferedImage.TYPE_INT_ARGB));
+        int w = img.getWidth();
+        int h = img.getHeight();
+        BufferedImage[][] imgs = new BufferedImage[(h / tileSizeY)][(w / tileSizeX)];
         
-        for (int i = 0; i < aux.length - 1; i++) {
-            aux[i + 1] = new Tile(img.getSubimage((i % tm) * tileSizeX, (i / tm) * tileSizeY, tileSizeX, tileSizeY));
+        for (int i = 0; i < imgs.length; i++) {
+            for (int j = 0; j < imgs[0].length; j++) {
+                imgs[i][j] = img.getSubimage(j * tileSizeX, i * tileSizeY, tileSizeX, tileSizeY);
+            }
         }
 
         ChangeListener.clear();
-        m.setTiles(aux);
+        return imgs;
     }
 }
