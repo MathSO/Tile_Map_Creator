@@ -84,6 +84,17 @@ public class Menu {
     }
 
     public void newMap() {
+        if (ChangeListener.hasChange()) {
+            switch (JOptionPane.showConfirmDialog(null, "Might be some unsaved changes, whould like to save them?")) {
+                case JOptionPane.CANCEL_OPTION:
+                    return;
+                case JOptionPane.YES_OPTION:
+                    saveMap();
+                    // fall through
+                case JOptionPane.NO_OPTION:
+            }
+        }
+
         Map aux = TileIO.newMap();
         if (aux != null) {
             aux.setTileSet(map.getTileSet());
@@ -102,6 +113,17 @@ public class Menu {
     }
 
     public void loadMap() {
+        if (ChangeListener.hasChange()) {
+            switch (JOptionPane.showConfirmDialog(null, "Might be some unsaved changes, whould like to save them?")) {
+                case JOptionPane.CANCEL_OPTION:
+                    return;
+                case JOptionPane.YES_OPTION:
+                    saveMap();
+                    // fall through
+                case JOptionPane.NO_OPTION:
+            }
+        }
+
         Map aux = TileIO.loadMap();
         if (aux != null) {
             map = aux;
