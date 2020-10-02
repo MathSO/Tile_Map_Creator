@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 public class TileSet {
     private Tile[][] tileSet;
+    private Tile def;
     private int tileWidth;
     private int tileHeight;
     private int tilesPerLine;
@@ -23,11 +24,13 @@ public class TileSet {
                 tileSet[i][j] = new Tile(imgs[i][j]);
             }
         }
+
+        this.def = new Tile(new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB));
     }
 
     public Tile getTile(int x, int y){
         if(x < 0 || y < 0 || x >= tileSet.length || y >= tileSet[x].length) {
-            return new Tile(new BufferedImage(tileWidth, tileHeight, BufferedImage.TYPE_INT_ARGB));
+            return def;
         }
 
         return tileSet[x][y];

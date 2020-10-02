@@ -1,7 +1,7 @@
 package screen;
 
-import tile.TileSet;
 import tile.TileIO;
+import tile.TileSet;
 
 import update.ChangeListener;
 

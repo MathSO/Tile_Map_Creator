@@ -1,33 +1,35 @@
 package tile;
 
-import update.ChangeListener;
-
 import screen.Map;
 
-import java.io.ObjectOutputStream;
+import update.ChangeListener;
+
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.File;
 
 import java.awt.image.BufferedImage;
 
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JLabel;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SpringLayout;
 
 public class TileIO {
     private static JFileChooser fc = new JFileChooser();
     private static File file;
-    private static JTextField wt = new JTextField(15), ht = new JTextField(15);
+    private static JTextField wt = new JTextField(15);
+    private static JTextField ht = new JTextField(15);
 
     public static Map newMap() {
         file = null;
 
-        int x = 0, y = 0;
+        int x = 0;
+        int y = 0;
         if (JOptionPane.showConfirmDialog(null, createPanel(), "Map size", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
             try {
                 x = Integer.parseInt(wt.getText());
@@ -53,7 +55,8 @@ public class TileIO {
 
     public static Map loadMap() {
         ObjectInputStream sc;
-        int x, y;
+        int x;
+        int y;
         int aux[][];
 
         try {
@@ -145,7 +148,8 @@ public class TileIO {
 
     private static JPanel createPanel(){
         SpringLayout layout = new SpringLayout();
-        JLabel wl = new JLabel("Width:"), hl = new JLabel("Height:");
+        JLabel wl = new JLabel("Width:");
+        JLabel hl = new JLabel("Height:");
         JPanel painel = new JPanel(layout);
 
         wt = new JTextField(15);

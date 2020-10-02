@@ -18,8 +18,7 @@ public class Panel  extends javax.swing.JPanel implements java.awt.event.MouseLi
         this.menu = new screen.Menu();
     }
 
-    @Override
-    public void paint(java.awt.Graphics g) {
+    @Override public void paint(java.awt.Graphics g) {
         g.setColor(java.awt.Color.BLACK);
         g.fillRect(0,0,this.getWidth(),this.getHeight());
 
@@ -57,13 +56,11 @@ public class Panel  extends javax.swing.JPanel implements java.awt.event.MouseLi
         menu.redo();
     }
 
-    public void keyReleased(KeyEvent e) {
+    @Override public void keyReleased(KeyEvent e) {
         menu.keyReleased(e);
     }
 
-    public void keyTyped(KeyEvent e) {}
-
-    public void keyPressed(KeyEvent e) {
+    @Override public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_S && e.getModifiers() == KeyEvent.CTRL_MASK){
             System.out.println("Salvando...");
             this.saveMap();
@@ -73,14 +70,16 @@ public class Panel  extends javax.swing.JPanel implements java.awt.event.MouseLi
         }
     }
 
-    public void mouseClicked(MouseEvent e) {
+    @Override public void keyTyped(KeyEvent e) {}
+
+    @Override public void mouseClicked(MouseEvent e) {
         if (e.getButton() == MouseEvent.BUTTON1) {
             this.menu.mouseClick(e.getX(), e.getY());
         }
     }
 
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    @Override public void mousePressed(MouseEvent e) {}
+    @Override public void mouseReleased(MouseEvent e) {}
+    @Override public void mouseEntered(MouseEvent e) {}
+    @Override public void mouseExited(MouseEvent e) {}
 }
